@@ -3,6 +3,21 @@ import math
 import numpy as np
 import os
 
+import pydevd_pycharm
+
+def init_remote_debugger(remote_debug_server_host: str = 'localhost',
+                         remote_debug_server_port: int = 37409) -> bool:
+    print('attempting to connect to remote debugger')
+    try:
+        pydevd_pycharm.settrace(remote_debug_server_host,
+                                port=remote_debug_server_port,
+                                stdoutToServer=True,
+                                stderrToServer=True,
+                                suspend=False)
+        return True
+    except:
+        print('could not connect to remote debugger')
+        return False
 
 def getTheta(X ,Y):
 	THETA = [None]*len(X)
@@ -287,6 +302,8 @@ def readG2o(fileName):
 
 
 if __name__ == '__main__':
+	init_remote_debugger()
+
 	(X, Y, THETA) = genTraj()
 	draw(X, Y, THETA)
 

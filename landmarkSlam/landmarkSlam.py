@@ -8,6 +8,21 @@ import os
 
 np.random.seed(42)
 
+import pydevd_pycharm
+
+def init_remote_debugger(remote_debug_server_host: str = 'localhost',
+                         remote_debug_server_port: int = 37409) -> bool:
+    print('attempting to connect to remote debugger')
+    try:
+        pydevd_pycharm.settrace(remote_debug_server_host,
+                                port=remote_debug_server_port,
+                                stdoutToServer=True,
+                                stderrToServer=True,
+                                suspend=False)
+        return True
+    except:
+        print('could not connect to remote debugger')
+        return False
 
 def getVertices():
 	points = [[0, 8, 8], [0, 0, 8], [0, 0, 0], [0, 8, 0], [8, 8, 8], [8, 0, 8], [8, 0, 0], [8, 8, 0]]
@@ -171,7 +186,7 @@ def icpTransformations(cubes):
 
 	corr = np.array([(i, i) for i in range(8)]) 
 
-	p2p = o3d.registration.TransformationEstimationPointToPoint()
+	p2p = o3d.pipelines.registration.TransformationEstimationPointToPoint()
 
 	T1_2 = p2p.compute_transformation(pcd2, pcd1, o3d.utility.Vector2iVector(corr))
 	T2_3 = p2p.compute_transformation(pcd3, pcd2, o3d.utility.Vector2iVector(corr))
@@ -332,6 +347,9 @@ def getRelativeEdge(poses):
 
 
 if __name__ == '__main__':
+
+	init_remote_debugger()
+
 	vertices, points = getVertices()
 	frames, poses = getFrames()
 
